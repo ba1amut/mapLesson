@@ -21,10 +21,11 @@ import javax.xml.parsers.ParserConfigurationException;
 /**
  * Created by bu on 26.07.2016.
  */
-public class GetLocation extends AsyncTask<String, String, String> {
+public class GetLocation extends AsyncTask<String, Void, String> {
     NodeList nodeList;
     String lat;
     String lon;
+
 
     @Override
     protected String doInBackground(String... Url) {
@@ -40,10 +41,13 @@ public class GetLocation extends AsyncTask<String, String, String> {
             doc.getDocumentElement().normalize();
             nodeList = doc.getElementsByTagName("coordinates");
             Element node = (Element) nodeList.item(0);
-            lat = node.getAttribute("latitude");
-            lon = node.getAttribute("longitude");
+            lat = node.getAttribute("nlatitude");
+            lon = node.getAttribute("nlongitude");
+            MainActivity.cellLatitude = Double.valueOf(lat);
+            MainActivity.cellLongitude = Double.valueOf(lon);
+            String s = lat+lon;
 
-            Log.d(".....", "Test String");
+            Log.d(".....", s);
 
 
         } catch (MalformedURLException e) {
@@ -58,4 +62,11 @@ public class GetLocation extends AsyncTask<String, String, String> {
         return lat;
 
     }
+
+    @Override
+    protected void onPostExecute(String s) {
+
+        super.onPostExecute(s);
+    }
+
 }

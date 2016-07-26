@@ -12,6 +12,7 @@ import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -19,6 +20,14 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.w3c.dom.NodeList;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -28,17 +37,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     TextView LAC;
     Location location;
 
-    String URL;
+    String URLStr;
+    URL url1;
 
-
+    NodeList nodeList;
     CellLocation cellLocation;
     TelephonyManager manager;
     int cid;
     int lac;
     int mcc;
     int mnc;
-    double cellLatitude;
-    double cellLongitude;
+    static double cellLatitude;
+    static double cellLongitude;
 
 
     @Override
@@ -46,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_layout);
 
-        MapFragment mapFragment = (MapFragment)getFragmentManager().findFragmentById(R.id.map);
+        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
 
@@ -65,17 +75,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             String networkOperator = manager.getNetworkOperator();
             mcc = Integer.parseInt(networkOperator.substring(0, 3));
             mnc = Integer.parseInt(networkOperator.substring(3));
-            URL = "http://mobile.maps.yandex.net/cellid_location/?&cellid=" + cid + "&operatorid=" + mnc + "&countrycode=" + mcc + "&lac=" + lac;
+            URLStr = "http://mobile.maps.yandex.net/cellid_location/?&cellid=" + cid + "&operatorid=" + mnc + "&countrycode=" + mcc + "&lac=" + lac;
 
         }
-        GetLocation getLocation = (GetLocation)new GetLocation().execute(URL);
-        cellLatitude = Double.valueOf(getLocation.lat);
-        cellLongitude =Double.valueOf(getLocation.lon);
-        Log.d("...","ergeegrergegr");
+
+        GetLocation getLocation;
+        try {
+            getLocation = (GetLocation) new GetLocation().execute(URLStr);
+            Log.d("....", "Dsta from " + cellLongitude);
+            String qwerqwe = getLocation.get(1, TimeUnit.SECONDS);
+            Log.d("....", "Dsta from1 " + qwerqwe);
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            Toast.makeText(this,"Не удалось получить даннеы с сервера",Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
 
 
     }
-
 
 //        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 //        String provider = LocationManager.PASSIVE_PROVIDER;
@@ -95,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap map) {
 //        LatLng sydney = new LatLng(-33.867, 151.206);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(cellLatitude,cellLongitude),16));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(cellLatitude, cellLongitude), 14));
         map.addMarker(new MarkerOptions()
                 .anchor(0.0f, 1.0f)
                 .position(new LatLng(cellLatitude, cellLongitude)));
@@ -119,4 +140,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 }
+
+
 
