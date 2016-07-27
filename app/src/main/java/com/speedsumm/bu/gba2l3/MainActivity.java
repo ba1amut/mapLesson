@@ -2,6 +2,7 @@ package com.speedsumm.bu.gba2l3;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.identity.intents.Address;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -22,8 +24,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -34,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     TextView CellID;
     TextView LAC;
     final static String LOG = "NET_MONITOR LOG";
-
+    Geocoder myGeo;
     String URLStr;
     CellLocation cellLocation;
     TelephonyManager manager;
@@ -58,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         hashMarkers = new HashSet<>();
         dbHandler = new DBHandler(this);
+        myGeo = new Geocoder(this);
         CellID = (TextView) findViewById(R.id.CellID);
         LAC = (TextView) findViewById(R.id.LAC);
 
@@ -79,19 +84,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
+        List<android.location.Address> allAd = null;
         this.map = googleMap;
         map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         Iterator<Marker> iterator = hashMarkers.iterator();
-        while (iterator.hasNext()) {
-            Marker marker = iterator.next();
 
+
+        while (iterator.hasNext()) {
+
+            Marker marker = iterator.next();
+            try {
+                allAd= myGeo.getFromLocation(marker.getCellLat(), marker.getCellLon(),1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             map.addMarker(new MarkerOptions()
 
                     .anchor(0.5f, 0.5f)
                     .position(new LatLng(marker.getCellLat(), marker.getCellLon()))
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.point1))
+                    .snippet(allAd.get(0).getAddressLine(0))
                     .title("CELL " + String.valueOf(marker.getCellID())));
+
             Log.d(LOG, "Сформрован маркер с кооринатами " + String.valueOf(marker.getCellLat()) + " " + String.valueOf(marker.getCellLon()));
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(marker.getCellLat(), marker.getCellLon()), 12));
         }

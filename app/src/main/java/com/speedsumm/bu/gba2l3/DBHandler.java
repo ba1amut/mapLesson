@@ -9,9 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-/**
- * Created by bu on 26.07.2016.
- */
+
 public class DBHandler extends SQLiteOpenHelper {
 
 
@@ -22,6 +20,9 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String CELL_ID_KEY = "CELL_ID";
     private static final String CELL_LAT_KEY = "CELL_LAT";
     private static final String CELL_LON_KEY = "CELL_LON";
+    private static final String CELL_MCC_NAME = "CELL_MCC";
+    private static final String CELL_MNC_NAME = "CELL_MNC";
+    private static final String CELL_LAC_NAME = "CELL_LAC";
 
     public DBHandler(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -29,7 +30,9 @@ public class DBHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        String CREATE_STRING = "CREATE TABLE " + TABLE_NAME + " (" + ID_KEY + " INTEGER PRIMARY KEY, " + CELL_ID_KEY + " INTEGER, " + CELL_LAT_KEY + " DOUBLE, " + CELL_LON_KEY + " DOUBLE)";
+        String CREATE_STRING = "CREATE TABLE " + TABLE_NAME + " (" + ID_KEY + " INTEGER PRIMARY KEY, " + CELL_ID_KEY + " INTEGER, "
+                + CELL_LAT_KEY + " DOUBLE, " + CELL_LON_KEY + " DOUBLE, " + CELL_MCC_NAME + " INTEGER, "
+                + CELL_MNC_NAME + " INTEGER, " + CELL_LAC_NAME + " INTEGER)";
         sqLiteDatabase.execSQL(CREATE_STRING);
 
     }
@@ -45,6 +48,9 @@ public class DBHandler extends SQLiteOpenHelper {
         cv.put(CELL_ID_KEY, marker.getCellID());
         cv.put(CELL_LAT_KEY, marker.getCellLat());
         cv.put(CELL_LON_KEY, marker.getCellLon());
+        cv.put(CELL_MCC_NAME, marker.getCellMcc());
+        cv.put(CELL_MNC_NAME, marker.getCellMnc());
+        cv.put(CELL_LAC_NAME, marker.getCellLac());
         sqLiteDatabase.insert(TABLE_NAME, null, cv);
     }
 
@@ -60,6 +66,9 @@ public class DBHandler extends SQLiteOpenHelper {
             marker.setCellID(cursor.getInt(cursor.getColumnIndex(CELL_ID_KEY)));
             marker.setCellLat(cursor.getDouble(cursor.getColumnIndex(CELL_LAT_KEY)));
             marker.setCellLon(cursor.getDouble(cursor.getColumnIndex(CELL_LON_KEY)));
+            marker.setCellMcc(cursor.getInt(cursor.getColumnIndex(CELL_MCC_NAME)));
+            marker.setCellMnc(cursor.getInt(cursor.getColumnIndex(CELL_MNC_NAME)));
+            marker.setCellLac(cursor.getInt(cursor.getColumnIndex(CELL_LAC_NAME)));
             hashMarkers.add(marker);
         }
         cursor.close();
