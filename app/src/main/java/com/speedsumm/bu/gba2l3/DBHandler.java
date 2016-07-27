@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Created by bu on 26.07.2016.
@@ -47,7 +48,7 @@ public class DBHandler extends SQLiteOpenHelper {
         sqLiteDatabase.insert(TABLE_NAME, null, cv);
     }
 
-    public ArrayList<Marker> getAllMarkers(ArrayList hashMarkers) {
+    public HashSet<Marker> getAllMarkers(HashSet hashMarkers) {
 //        ArrayList<Task> taskArrayList = new ArrayList<>();
         hashMarkers.clear();
         SQLiteDatabase sqLiteDatabase = getReadableDatabase();

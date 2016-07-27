@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     int mnc;
     static double cellLatitude;
     static double cellLongitude;
-    ArrayList<Marker> hashMarkers;
+    HashSet<Marker> hashMarkers;
     PhoneListener phoneListener;
     DBHandler dbHandler;
 
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        hashMarkers = new ArrayList<>();
+        hashMarkers = new HashSet<>();
         dbHandler = new DBHandler(this);
 
 
@@ -153,18 +153,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onMapReady(GoogleMap map) {
-
-        for (int i = 0; i < hashMarkers.size(); i++) {
+Iterator<Marker> iterator = hashMarkers.iterator();
+//        for (int i = 0; i < hashMarkers.size(); i++)
+        while(iterator.hasNext())
+        {
             map.addMarker(new MarkerOptions()
 
                     .anchor(0.5f, 0.5f)
-                    .position(new LatLng(hashMarkers.get(i).getCellLat(), hashMarkers.get(i).getCellLon()))
+//                    .position(new LatLng(hashMarkers.get(i).getCellLat(), hashMarkers.get(i).getCellLon()))
+                    .position(new LatLng(iterator.next().getCellLat(), iterator.next().getCellLon()))
                     .icon(BitmapDescriptorFactory.fromResource(android.R.drawable.star_off))
-                    .title("CELL " + String.valueOf(hashMarkers.get(i).getCellID())));
+                    .title("CELL " + String.valueOf(iterator.next().getCellID())));
+//                    .title("CELL " + String.valueOf(hashMarkers.get(i).getCellID())));
 //            Log.d("....", "Сформрован маркер с кооринатами " + String.valueOf(iterator.next().getCellLat()) + " " + String.valueOf(iterator.next().getCellLon()));
 
         }
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(hashMarkers.get(hashMarkers.size() - 1).getCellLat(), hashMarkers.get(hashMarkers.size() - 1).getCellLon()), 10));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(iterator.next().getCellLat(), iterator.next().getCellLon()), 12));
+//        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(hashMarkers.get(hashMarkers.size() - 1).getCellLat(), hashMarkers.get(hashMarkers.size() - 1).getCellLon()), 10));
 
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -183,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         public void onCellLocationChanged(CellLocation location) {
             super.onCellLocationChanged(location);
-            Toast.makeText(MainActivity.this,"смена базовой соты "+ location,Toast.LENGTH_LONG).show();
+//            Toast.makeText(MainActivity.this,"смена базовой соты "+ location,Toast.LENGTH_LONG).show();
 
             Log.d(".....", "onCellInfoChanged: " + location);
 
@@ -215,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             }
             dbHandler.addMMarker(new Marker(cellLatitude, cellLongitude, cid));
-            Toast.makeText(MainActivity.this,"в базу добалена информация о вышке "+ String.valueOf(cid)+" "+String.valueOf(cellLatitude)+" "+String.valueOf(cellLongitude),Toast.LENGTH_LONG).show();
+//            Toast.makeText(MainActivity.this,"в базу добалена информация о вышке "+ String.valueOf(cid)+" "+String.valueOf(cellLatitude)+" "+String.valueOf(cellLongitude),Toast.LENGTH_LONG).show();
             Log.d(".....","в базу добалена информация о вышке "+ String.valueOf(cid)+" "+String.valueOf(cellLatitude)+" "+String.valueOf(cellLongitude));
 
 
