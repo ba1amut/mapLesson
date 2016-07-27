@@ -33,8 +33,7 @@ public class GetLocation extends AsyncTask<String, Void, String> {
         try {
             URL url = new URL(Url[0]);
 
-//            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-//            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
             Document doc = documentBuilder.parse(new InputSource(url.openStream()));

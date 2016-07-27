@@ -7,11 +7,16 @@ public class Marker {
     double cellLat;
     double cellLon;
     int cellID;
+    int id;
 
     public Marker(double cellLat, double cellLon, int cellID) {
         this.cellLat = cellLat;
         this.cellLon = cellLon;
         this.cellID = cellID;
+    }
+
+    public Marker() {
+
     }
 
     public double getCellLat() {
@@ -36,5 +41,13 @@ public class Marker {
 
     public void setCellID(int cellID) {
         this.cellID = cellID;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
