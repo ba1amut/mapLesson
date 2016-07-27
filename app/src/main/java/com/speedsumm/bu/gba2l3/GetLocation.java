@@ -18,9 +18,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-/**
- * Created by bu on 26.07.2016.
- */
+
 public class GetLocation extends AsyncTask<String, Void, String> {
     NodeList nodeList;
     String lat;
@@ -46,7 +44,7 @@ public class GetLocation extends AsyncTask<String, Void, String> {
             MainActivity.cellLongitude = Double.valueOf(lon);
             String s = lat+lon;
 
-            Log.d(".....", s);
+            Log.d(MainActivity.LOG, s);
 
 
         } catch (MalformedURLException e) {
